@@ -1,0 +1,49 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+
+PortSystem          1.0
+PortGroup           github 1.0
+PortGroup           xcode 1.0
+
+github.setup        manicmaniac class-dump 3.5-0.1.1
+revision            0
+
+name                class-dump
+categories          devel
+license             GPL-2
+platforms           darwin
+maintainers         manicmaniac
+
+description         Utility for examining the Objective-C segment of \
+                    Mach-O files.
+long_description    It generates declarations for the classes, \
+                    categories and protocols. This is the same \
+                    information provided by using 'otool -ov', \
+                    but presented as normal Objective-C declarations.
+
+checksums           rmd160  ea14b935f3c20ffe31c502280919e219533b4b5e \
+                    sha256  40f5f4c91b8dae9c0e2c017d386b49d38ce1191638d8555933f770b68d500a48
+
+# error: -fobjc-arc is not supported on platforms using the legacy runtime
+supported_archs     x86_64
+
+worksrcdir          ${distname}
+
+xcode.target        class-dump
+xcode.configuration Release
+xcode.destroot.path ${prefix}/bin
+
+if {${os.major} < 12} {
+    known_fail      yes
+    pre-fetch {
+        ui_error "${name} @${version} requires OS X 10.8 or later."
+        return -code error "incompatible OS X version"
+    }
+}
+
+post-destroot {
+    set docdir ${prefix}/share/doc/${name}
+    xinstall -d ${destroot}${docdir}
+    xinstall -m 644 ${worksrcpath}/README.md ${destroot}${docdir}
+
+    delete ${destroot}${prefix}/bin/libMachObjC.a
+}

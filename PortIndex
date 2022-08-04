@@ -1,0 +1,2 @@
+class-dump 476
+portdir devel/class-dump description {Utility for examining the Objective-C segment of Mach-O files.} homepage https://github.com/manicmaniac/class-dump epoch 0 platforms darwin name class-dump license GPL-2 maintainers manicmaniac long_description {It generates declarations for the classes, categories and protocols. This is the same information provided by using 'otool -ov', but presented as normal Objective-C declarations.} version 3.5-0.1.1 categories devel revision 0
