@@ -5,13 +5,13 @@ PortGroup           github 1.0
 PortGroup           xcode 1.0
 
 github.setup        manicmaniac class-dump 3.5-0.1.1
-revision            0
+github.tarball_from archive
 
 name                class-dump
 categories          devel
 license             GPL-2
 platforms           darwin
-maintainers         manicmaniac
+maintainers         @manicmaniac gmail.com:rito.0305
 
 description         Utility for examining the Objective-C segment of \
                     Mach-O files.
