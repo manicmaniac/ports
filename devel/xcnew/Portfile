@@ -21,7 +21,8 @@ long_description        It generates iOS Single View App template filled with \
                         same as Xcode does.
 
 checksums               rmd160  d7abaf752964c2d4af8efe2e9514c8f1d63ba464 \
-                        sha256  9f92205f7662b8401318798741fc439876e94bc93a1c9f98a63a810120d5f7a7
+                        sha256  9f92205f7662b8401318798741fc439876e94bc93a1c9f98a63a810120d5f7a7 \
+                        size    39826
 
 supported_archs         x86_64
 
