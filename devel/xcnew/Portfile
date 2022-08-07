@@ -1,0 +1,26 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+
+PortSystem              1.0
+PortGroup               github 1.0
+PortGroup               xcode 1.0
+
+github.setup            manicmaniac xcnew 0.6.1
+github.tarball_from     archive
+
+name                    xcnew
+categories              devel
+license                 MIT
+platforms               macosx
+maintainers             @manicmaniac gmail.com:rito.0305
+
+description             Missing command-line interface to make a project for \
+                        iOS Single View App.
+
+checksums               rmd160  d7abaf752964c2d4af8efe2e9514c8f1d63ba464 \
+                        sha256  9f92205f7662b8401318798741fc439876e94bc93a1c9f98a63a810120d5f7a7
+
+supported_archs         x86_64
+
+xcode.target            xcnew
+xcode.configuration     Release
+xcode.destroot.path     ${prefix}/bin

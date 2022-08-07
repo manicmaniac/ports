@@ -1,2 +1,4 @@
-class-dump 476
-portdir devel/class-dump description {Utility for examining the Objective-C segment of Mach-O files.} homepage https://github.com/manicmaniac/class-dump epoch 0 platforms darwin name class-dump license GPL-2 maintainers manicmaniac long_description {It generates declarations for the classes, categories and protocols. This is the same information provided by using 'otool -ov', but presented as normal Objective-C declarations.} version 3.5-0.1.1 categories devel revision 0
+class-dump 499
+portdir devel/class-dump description {Utility for examining the Objective-C segment of Mach-O files.} homepage https://github.com/manicmaniac/class-dump epoch 0 platforms darwin name class-dump license GPL-2 maintainers {@manicmaniac gmail.com:rito.0305} long_description {It generates declarations for the classes, categories and protocols. This is the same information provided by using 'otool -ov', but presented as normal Objective-C declarations.} version 3.5-0.1.1 categories devel revision 0
+xcnew 291
+platforms macosx description {Missing command-line interface to make a project for iOS Single View App.} portdir devel/xcnew name xcnew categories devel version 0.6.1 homepage https://github.com/manicmaniac/xcnew revision 0 maintainers {@manicmaniac gmail.com:rito.0305} license MIT epoch 0
