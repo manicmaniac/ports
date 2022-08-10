@@ -1,0 +1,139 @@
+#!/usr/bin/env python3
+
+import hashlib
+import os
+import re
+import subprocess
+import sys
+import urllib.request
+
+
+class Portfile(object):
+    _github_re = re.compile(r'^(?P<prefix>github\.setup\s+)' +
+                            r'(?P<owner>[\w-]+) (?P<repo>[\w-]+) ' +
+                            r'(?P<tag>[0-9-.]+)$')
+    _rmd160_re = re.compile(r'^(?P<prefix>.*rmd160\s+)' +
+                            r'(?P<hex>[0-9a-f]+)(?P<suffix>.*)$')
+    _sha256_re = re.compile(r'^(?P<prefix>.*sha256\s+)' +
+                            r'(?P<hex>[0-9a-f]+)(?P<suffix>.*)$')
+    _size_re = re.compile(r'^(?P<prefix>.*size\s+)' +
+                          r'(?P<size>\d+)(?P<suffix>.*)$')
+
+    def __init__(self, f):
+        self.owner = None
+        self.repo = None
+        self.tag = None
+        self.rmd160 = None
+        self.sha256 = None
+        self.size = None
+        self.lines = []
+        for line in f:
+            if 'github.setup' in line:
+                line = self._github_re.sub(self._github_sub, line)
+            elif 'rmd160' in line:
+                line = self._rmd160_re.sub(self._rmd160_sub, line)
+            elif 'sha256' in line:
+                line = self._sha256_re.sub(self._sha256_sub, line)
+            elif 'size' in line:
+                line = self._size_re.sub(self._size_sub, line)
+            self.lines.append(line)
+
+    def __str__(self):
+        string = ''
+        for line in self.lines:
+            if 'github.setup' in line:
+                line = line.replace('__OWNER__', self.owner)
+                line = line.replace('__REPO__', self.repo)
+                line = line.replace('__TAG__', self.tag)
+            elif 'rmd160' in line:
+                line = line.replace('__RMD160__', self.rmd160)
+            elif 'sha256' in line:
+                line = line.replace('__SHA256__', self.sha256)
+            elif 'size' in line:
+                line = line.replace('__SIZE__', str(self.size))
+            string += line
+        return string
+
+
+    def _github_sub(self, matched):
+        self.owner = matched.group('owner')
+        self.repo = matched.group('repo')
+        self.tag = matched.group('tag')
+        return matched.group('prefix') + '__OWNER__ __REPO__ __TAG__'
+
+    def _rmd160_sub(self, matched):
+        self.rmd160 = matched.group('hex')
+        return matched.group('prefix') + '__RMD160__' + matched.group('suffix')
+
+    def _sha256_sub(self, matched):
+        self.sha256 = matched.group('hex')
+        return matched.group('prefix') + '__SHA256__' + matched.group('suffix')
+
+    def _size_sub(self, matched):
+        self.size = matched.group('size')
+        return matched.group('prefix') + '__SIZE__' + matched.group('suffix')
+
+
+def find_portfile_paths():
+    args = ['git', 'ls-files', '-z', '*/Portfile']
+    encoding = sys.getfilesystemencoding()
+    output = subprocess.check_output(args, encoding=encoding)
+    for path in output.rstrip('\0').split('\0'):
+        yield path
+
+
+def fetch_latest_tag(owner, repo):
+    url = 'https://github.com/{}/{}.git'.format(owner, repo)
+    args = ['git', 'ls-remote', '--exit-code', '--refs', '--tags',
+            '--sort=-version:refname', url, '*.*']
+    output = subprocess.check_output(args, encoding='utf-8')
+    ref = output.splitlines()[0].split('\t', 2)[-1]
+    return ref.split('/')[-1]
+
+
+def fetch_archive(owner, repo, tag):
+    url = 'https://github.com/{}/{}/archive/refs/tags/{}.tar.gz'.format(
+            owner, repo, tag)
+    path, _headers = urllib.request.urlretrieve(url)
+    return path
+
+
+def compute_rmd160(path):
+    args = ['openssl', 'rmd160', path]
+    output = subprocess.check_output(args, encoding='utf-8')
+    return output.rstrip().split(' ')[-1]
+
+
+def compute_sha256(path):
+    sha256 = hashlib.sha256()
+    with open(path, 'rb') as f:
+        sha256.update(f.read())
+    return sha256.hexdigest()
+
+
+def get_filesize(path):
+    return os.lstat(path).st_size
+
+
+if __name__ == '__main__':
+    messages = []
+    for path in find_portfile_paths():
+        with open(path) as f:
+            portfile = Portfile(f)
+        old_tag = portfile.tag
+        latest_tag = fetch_latest_tag(portfile.owner, portfile.repo)
+        if old_tag == latest_tag:
+            continue
+        portfile.tag = latest_tag
+        archive = fetch_archive(portfile.owner, portfile.repo, portfile.tag)
+        portfile.rmd160 = compute_rmd160(archive)
+        portfile.sha256 = compute_sha256(archive)
+        portfile.size = get_filesize(archive)
+        os.remove(archive)
+        with open(path, 'w') as f:
+            f.write(str(portfile))
+        message = '- Updated {}/{} from {} to {}'.format(
+                portfile.owner, portfile.repo, old_tag, latest_tag)
+        messages.append(message)
+    if messages:
+        print('::set-output name=message::' + r'\n'.join(messages))
