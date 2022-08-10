@@ -116,11 +116,13 @@ def get_filesize(path):
 
 
 if __name__ == '__main__':
+    messages = []
     for path in find_portfile_paths():
         with open(path) as f:
             portfile = Portfile(f)
+        old_tag = portfile.tag
         latest_tag = fetch_latest_tag(portfile.owner, portfile.repo)
-        if portfile.tag == latest_tag:
+        if old_tag == latest_tag:
             continue
         portfile.tag = latest_tag
         archive = fetch_archive(portfile.owner, portfile.repo, portfile.tag)
@@ -130,3 +132,8 @@ if __name__ == '__main__':
         os.remove(archive)
         with open(path, 'w') as f:
             f.write(str(portfile))
+        message = '- Updated {}/{} from {} to {}'.format(
+                portfile.owner, portfile.repo, old_tag, latest_tag)
+        messages.append(message)
+    if messages:
+        print('::set-output name=message::' + r'\n'.join(messages))
