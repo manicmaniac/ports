@@ -1,5 +1,8 @@
 name: Update
-on: workflow_dispatch
+on:
+  schedule:
+    cron: '18 18 * * *'
+  workflow_dispatch:
 jobs:
   update:
     runs-on: ubuntu-20.04
@@ -12,6 +15,7 @@ jobs:
       id: update-portfiles
       run: .github/bin/update-portfiles
     - uses: peter-evans/create-pull-request@v4
+      id: create-pull-request
       with:
         commit-message: Update portfiles
         branch: update-portfiles
@@ -20,4 +24,9 @@ jobs:
         body: ${{ steps.update-portfiles.outputs.message }}
         author: 'github-actions[bot] <github-actions[bot]@users.noreply.github.com>'
         committer: 'github-actions[bot] <github-actions[bot]@users.noreply.github.com>'
+        token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+    - uses: peter-evans/enable-pull-request-automerge@v2
+      if: ${{ steps.create-pull-request.outputs.pull-request-operation == 'created' }}
+      with:
+        pull-request-number: ${{ steps.create-pull-request.outputs.pull-request-number }}
         token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
