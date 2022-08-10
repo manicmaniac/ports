@@ -8,10 +8,6 @@ jobs:
         shell: bash
     steps:
     - uses: actions/checkout@v3
-    - name: Configure Git
-      run: |
-        git config --local user.name 'github-actions[bot]'
-        git config --local user.email 'github-actions[bot]@users.noreply.github.com'
     - name: Update Portfiles
       id: update-portfiles
       run: .github/bin/update-portfiles
@@ -22,4 +18,6 @@ jobs:
         delete-branch: true
         title: Update Portfiles
         body: ${{ steps.update-portfiles.outputs.message }}
+        author: 'github-actions[bot] <github-actions[bot]@users.noreply.github.com>'
+        committer: 'github-actions[bot] <github-actions[bot]@users.noreply.github.com>'
         token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
