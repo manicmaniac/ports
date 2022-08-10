@@ -115,6 +115,16 @@ def get_filesize(path):
     return os.lstat(path).st_size
 
 
+def markdown_message(owner, repo, old_tag, new_tag):
+    name = '{}/{}'.format(owner, repo)
+    repo_url = 'https://github.com/{}'.format(name)
+    template = ('- Updated [{name}]({repo_url}) ' +
+                'from [{old_tag}]({repo_url}/releases/tag/{old_tag})' +
+                'to [{new_tag}]({repo_url}/releases/tag/{new_tag})')
+    return template.format(repo_url=repo_url, name=name, old_tag=old_tag,
+                           new_tag=new_tag)
+
+
 if __name__ == '__main__':
     messages = []
     for path in find_portfile_paths():
@@ -132,8 +142,10 @@ if __name__ == '__main__':
         os.remove(archive)
         with open(path, 'w') as f:
             f.write(str(portfile))
-        message = '- Updated {}/{} from {} to {}'.format(
-                portfile.owner, portfile.repo, old_tag, latest_tag)
+        message = markdown_message(portfile.owner,
+                                   portfile.repo,
+                                   old_tag,
+                                   latest_tag)
         messages.append(message)
     if messages:
         print('::set-output name=message::' + r'\n'.join(messages))
