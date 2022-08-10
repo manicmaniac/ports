@@ -15,7 +15,11 @@ jobs:
     - name: Update Portfiles
       id: update-portfiles
       run: .github/bin/update-portfiles
+    - name: Test
+      if: ${{ steps.update-portfiles.outputs.status == 'updated' }}
+      uses: ./.github/workflows/test.yml
     - uses: peter-evans/create-pull-request@v4
+      if: ${{ steps.update-portfiles.outputs.status == 'updated' }}
       with:
         commit-message: Update portfiles
         branch: update-portfiles
