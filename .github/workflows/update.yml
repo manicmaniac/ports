@@ -26,3 +26,4 @@ jobs:
         delete-branch: true
         title: Update Portfiles
         body: ${{ steps.update-portfiles.outputs.message }}
+        token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
