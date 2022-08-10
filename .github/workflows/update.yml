@@ -1,0 +1,24 @@
+name: Update
+on: workflow_dispatch
+jobs:
+  update:
+    runs-on: ubuntu-20.04
+    defaults:
+      run:
+        shell: bash
+    steps:
+    - uses: actions/checkout@v3
+    - name: Configure Git
+      run: |
+        git config --local user.name 'github-actions[bot]'
+        git config --local user.email 'github-actions[bot]@users.noreply.github.com'
+    - name: Update Portfiles
+      id: update-portfiles
+      run: .github/bin/update-portfiles
+    - uses: peter-evans/create-pull-request@v4
+      with:
+        commit-message: Update portfiles
+        branch: update-portfiles
+        delete-branch: true
+        title: Update Portfiles
+        body: ${{ steps.update-portfiles.outputs.message }}
