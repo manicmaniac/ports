@@ -1,7 +1,5 @@
 name: Test
-on:
-  push:
-  workflow_call:
+on: push
 jobs:
   test:
     runs-on: macOS-12
