@@ -4,7 +4,7 @@ PortSystem              1.0
 PortGroup               github 1.0
 PortGroup               xcode 1.0
 
-github.setup            manicmaniac xcnew 0.6.1
+github.setup            manicmaniac xcnew 0.6.2
 github.tarball_from     archive
 
 name                    xcnew
@@ -20,9 +20,9 @@ long_description        It generates iOS Single View App template filled with \
                         uses Xcode's internal API, the created project is the \
                         same as Xcode does.
 
-checksums               rmd160  d7abaf752964c2d4af8efe2e9514c8f1d63ba464 \
-                        sha256  9f92205f7662b8401318798741fc439876e94bc93a1c9f98a63a810120d5f7a7 \
-                        size    39826
+checksums               rmd160  cbca9406eda5bcf1623d0188882c344f0fce1b3d \
+                        sha256  e5049a7ce045a004680d1cf62d20e1003350029e31b723ceb5c1bb52c6af4ce8 \
+                        size    42104
 
 supported_archs         x86_64
 
