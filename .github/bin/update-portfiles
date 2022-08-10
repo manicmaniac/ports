@@ -115,10 +115,6 @@ def get_filesize(path):
     return os.lstat(path).st_size
 
 
-def set_output(name, value):
-    print('::set-output name={}::{}'.format(name, value))
-
-
 if __name__ == '__main__':
     messages = []
     for path in find_portfile_paths():
@@ -140,7 +136,4 @@ if __name__ == '__main__':
                 portfile.owner, portfile.repo, old_tag, latest_tag)
         messages.append(message)
     if messages:
-        set_output('message', r'\n'.join(messages))
-        set_output('status', 'updated')
-    else:
-        set_output('status', 'skipped')
+        print('::set-output name=message::' + r'\n'.join(messages))
