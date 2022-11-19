@@ -1,8 +1,5 @@
 name: Update
-on:
-  schedule:
-  - cron: '18 18 * * *'
-  workflow_dispatch:
+on: workflow_dispatch
 jobs:
   update:
     runs-on: ubuntu-20.04
