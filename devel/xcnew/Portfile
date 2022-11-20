@@ -20,9 +20,9 @@ long_description        It generates iOS Single View App template filled with \
                         uses Xcode's internal API, the created project is the \
                         same as Xcode does.
 
-checksums               rmd160  a36ee80c0114525ddb7648ff3ca59b95016e8b63 \
-                        sha256  923be76e7a067ccb1d4a213e6281611bd6f0744764bcaf6f7bd71a9c303cb7b7 \
-                        size    45765
+checksums               rmd160  d7d05d80ac410c657da855357b392e92e54e1d55 \
+                        sha256  4d33ef518d8d87b76cee90b52e68eb42edfa3feea6c6b7fea9ba76a17148a07c \
+                        size    45767
 
 supported_archs         x86_64
 
