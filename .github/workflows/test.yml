@@ -31,4 +31,8 @@ jobs:
     - name: Lint
       run: cut -d ' ' -f 1 PortIndex.quick | xargs /opt/local/bin/port lint --nitpick
     - name: Install
-      run: cut -d ' ' -f 1 PortIndex.quick | sudo xargs /opt/local/bin/port install
+      id: install
+      run: cut -d ' ' -f 1 PortIndex.quick | sudo xargs /opt/local/bin/port install 2>&1 | tee "$TMPDIR/install.log"
+    - name: Show failure log
+      if: failure() && steps.install.outcome == 'failure'
+      run: grep 'Error:' "$TMPDIR/install.log" | grep -o ' /[^ ]*[.]log ' | xargs cat
