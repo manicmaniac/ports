@@ -151,6 +151,10 @@ def markdown_message(owner, repo, old_tag, new_tag):
                            new_tag=new_tag)
 
 
+def update_port_index():
+    subprocess.check_call(['portindex', '-f'])
+
+
 if __name__ == '__main__':
     messages = []
     for path in find_portfile_paths():
@@ -174,4 +178,5 @@ if __name__ == '__main__':
                                    latest_tag)
         messages.append(message)
     if messages:
+        update_port_index()
         print('::set-output name=message::' + r'\n'.join(messages))
