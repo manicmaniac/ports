@@ -61,6 +61,21 @@ class Portfile(object):
             string += line
         return string
 
+    @property
+    def archive_url(self):
+        template = None
+        for line in self.lines:
+            if 'github.setup' in line:
+                template = ('https://github.com/{owner}/{repo}/archive/' +
+                            '{tag}/{repo}-{tag}.tar.gz')
+                break
+            elif 'go.setup' in line:
+                template = ('https://codeload.github.com/{owner}/{repo}/' +
+                            'legacy.tar.gz/{tag}?dummy={repo}-{tag}.tar.gz')
+                break
+        if template is None:
+            raise NotImplementedError
+        return template.format(owner=self.owner, repo=self.repo, tag=self.tag)
 
     def _github_sub(self, matched):
         self.owner = matched.group('owner')
@@ -104,9 +119,7 @@ def fetch_latest_tag(owner, repo):
     return ref.split('/')[-1]
 
 
-def fetch_archive(owner, repo, tag):
-    url = 'https://github.com/{}/{}/archive/refs/tags/{}.tar.gz'.format(
-            owner, repo, tag)
+def fetch_archive(url):
     path, _headers = urllib.request.urlretrieve(url)
     return path
 
@@ -148,7 +161,7 @@ if __name__ == '__main__':
         if old_tag == latest_tag:
             continue
         portfile.tag = latest_tag
-        archive = fetch_archive(portfile.owner, portfile.repo, portfile.tag)
+        archive = fetch_archive(portfile.archive_url)
         portfile.rmd160 = compute_rmd160(archive)
         portfile.sha256 = compute_sha256(archive)
         portfile.size = get_filesize(archive)
