@@ -12,6 +12,10 @@ class Portfile(object):
     _github_re = re.compile(r'^(?P<prefix>github\.setup\s+)' +
                             r'(?P<owner>[\w-]+) (?P<repo>[\w-]+) ' +
                             r'(?P<tag>[0-9-.]+)$')
+    _go_github_re = re.compile(r'^(?P<prefix>go\.setup\s+github\.com/)' +
+                               r'(?P<owner>[\w-]+)/' +
+                               r'(?P<repo>[\w-]+)\s+' +
+                               r'(?P<tag>[0-9-.]+)$')
     _rmd160_re = re.compile(r'^(?P<prefix>.*rmd160\s+)' +
                             r'(?P<hex>[0-9a-f]+)(?P<suffix>.*)$')
     _sha256_re = re.compile(r'^(?P<prefix>.*sha256\s+)' +
@@ -30,6 +34,8 @@ class Portfile(object):
         for line in f:
             if 'github.setup' in line:
                 line = self._github_re.sub(self._github_sub, line)
+            elif 'go.setup' in line and 'github.com' in line:
+                line = self._go_github_re.sub(self._go_github_sub, line)
             elif 'rmd160' in line:
                 line = self._rmd160_re.sub(self._rmd160_sub, line)
             elif 'sha256' in line:
@@ -41,7 +47,8 @@ class Portfile(object):
     def __str__(self):
         string = ''
         for line in self.lines:
-            if 'github.setup' in line:
+            if all(word in line
+                   for word in ('__OWNER__', '__REPO__', '__TAG__')):
                 line = line.replace('__OWNER__', self.owner)
                 line = line.replace('__REPO__', self.repo)
                 line = line.replace('__TAG__', self.tag)
@@ -54,12 +61,33 @@ class Portfile(object):
             string += line
         return string
 
+    @property
+    def archive_url(self):
+        template = None
+        for line in self.lines:
+            if 'github.setup' in line:
+                template = ('https://github.com/{owner}/{repo}/archive/' +
+                            '{tag}/{repo}-{tag}.tar.gz')
+                break
+            elif 'go.setup' in line:
+                template = ('https://codeload.github.com/{owner}/{repo}/' +
+                            'legacy.tar.gz/{tag}?dummy={repo}-{tag}.tar.gz')
+                break
+        if template is None:
+            raise NotImplementedError
+        return template.format(owner=self.owner, repo=self.repo, tag=self.tag)
 
     def _github_sub(self, matched):
         self.owner = matched.group('owner')
         self.repo = matched.group('repo')
         self.tag = matched.group('tag')
         return matched.group('prefix') + '__OWNER__ __REPO__ __TAG__'
+
+    def _go_github_sub(self, matched):
+        self.owner = matched.group('owner')
+        self.repo = matched.group('repo')
+        self.tag = matched.group('tag')
+        return matched.group('prefix') + '__OWNER__/__REPO__ __TAG__'
 
     def _rmd160_sub(self, matched):
         self.rmd160 = matched.group('hex')
@@ -91,9 +119,7 @@ def fetch_latest_tag(owner, repo):
     return ref.split('/')[-1]
 
 
-def fetch_archive(owner, repo, tag):
-    url = 'https://github.com/{}/{}/archive/refs/tags/{}.tar.gz'.format(
-            owner, repo, tag)
+def fetch_archive(url):
     path, _headers = urllib.request.urlretrieve(url)
     return path
 
@@ -125,6 +151,10 @@ def markdown_message(owner, repo, old_tag, new_tag):
                            new_tag=new_tag)
 
 
+def update_port_index():
+    subprocess.check_call(['portindex', '-f'])
+
+
 if __name__ == '__main__':
     messages = []
     for path in find_portfile_paths():
@@ -135,7 +165,7 @@ if __name__ == '__main__':
         if old_tag == latest_tag:
             continue
         portfile.tag = latest_tag
-        archive = fetch_archive(portfile.owner, portfile.repo, portfile.tag)
+        archive = fetch_archive(portfile.archive_url)
         portfile.rmd160 = compute_rmd160(archive)
         portfile.sha256 = compute_sha256(archive)
         portfile.size = get_filesize(archive)
@@ -148,4 +178,5 @@ if __name__ == '__main__':
                                    latest_tag)
         messages.append(message)
     if messages:
+        update_port_index()
         print('::set-output name=message::' + r'\n'.join(messages))

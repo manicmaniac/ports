@@ -1,0 +1,29 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+
+PortSystem          1.0
+PortGroup           golang 1.0
+
+go.setup            github.com/mrtazz/checkmake 0.2.1
+categories          devel
+maintainers         @manicmaniac gmail.com:rito.0305
+license             MIT
+
+description         Linter/analyzer for Makefiles.
+
+long_description    checkmake is an experimental tool for linting and checking Makefiles. \
+                    It may not do what you want it to.
+
+checksums           rmd160  4f0ba2256ca0487f1fd7ed479b51a3b1a6884ca5 \
+                    sha256  8bc57597bef84dd83e8a1dd39e03fae14d024c13dd899487aa9b5fcf0a83f99d \
+                    size    101072
+
+depends_build       port:go port:pandoc
+
+build.cmd           make
+build.target        all
+build.post_args     BUILDER_NAME=${install.user} BUILDER_EMAIL=${install.user}@localhost
+test.run            yes
+
+destroot {
+    xinstall ${worksrcpath}/checkmake ${destroot}${prefix}/bin
+}
