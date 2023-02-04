@@ -9,6 +9,9 @@ To install a package:
 
     # Clone the repository
     git clone https://github.com/manicmaniac/ports.git
+    # Create index
+    cd ports
+    portindex
     # Add the cloned repository to MacPorts sources
     sudo ruby -pi -e 'puts "file://#{Dir.pwd}/ports" if /^rsync:/' /opt/local/etc/macports/sources.conf
     # Then you can install packages
