@@ -12,6 +12,10 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - uses: melusina-org/gha-install-macports@v1
+    - name: Update MacPorts
+      run: sudo port selfupdate
+    - name: Install known dependencies
+      run: sudo port install go pandoc
     - name: Check PortIndex
       run: |
         portindex
