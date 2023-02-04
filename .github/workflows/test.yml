@@ -37,15 +37,11 @@ jobs:
         file://${{ github.workspace }}
         rsync://rsync.macports.org/macports/release/tarballs/ports.tar [default]
         EOF
-    - name: Check PortIndex
-      run: |
-        portindex -d -f
-        git diff --exit-code HEAD -- PortIndex PortIndex.quick
     - name: Lint
-      run: cut -d ' ' -f 1 PortIndex.quick | xargs port lint --nitpick
+      run: git ls-files -- '*/Portfile' | xargs dirname | xargs -I% -n1 port -D % lint --nitpick
     - name: Install
       id: install
-      run: cut -d ' ' -f 1 PortIndex.quick | sudo xargs port install 2>&1 | tee "$TMPDIR/install.log"
+      run: git ls-files -- '*/Portfile' | xargs dirname | sudo xargs -I% -n1 port -D % install 2>&1 | tee "$TMPDIR/install.log"
     - name: Show failure log
       if: failure() && steps.install.outcome == 'failure'
       run: grep 'Error:' "$TMPDIR/install.log" | grep -o ' /[^ ]*[.]log ' | xargs cat
