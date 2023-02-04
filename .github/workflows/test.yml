@@ -11,21 +11,15 @@ jobs:
         shell: bash
     steps:
     - uses: actions/checkout@v3
-    - name: Configure install-macports
-      run: |
-        cat <<-EOF > "${{ runner.temp }}/gha-install-macports.yml"
-        prefix: /opt/local
-        sources: 
-        - file://${{ github.workspace }}
-        - rsync://rsync.macports.org/macports/release/tarballs/ports.tar
-        EOF
     - uses: melusina-org/gha-install-macports@v1
       id: install-macports
-      with:
-        parameters: ${{ runner.temp }}/gha-install-macports.yml
     - name: Configure MacPorts
       run: |
-        echo 'revupgrade_mode report' | sudo tee -a ${{ steps.install-macports.outputs.prefix }}/etc/macports/macports.conf
+        echo 'revupgrade_mode report' | sudo tee -a /opt/local/etc/macports/macports.conf
+        cat <<-EOF | sudo tee /opt/local/etc/macports/sources.conf
+        file://${{ github.workspace }} [nosync]
+        rsync://rsync.macports.org/macports/release/tarballs/ports.tar [default]
+        EOF
     - name: Lint
       run: git ls-files -- '*/Portfile' | xargs dirname | xargs -I% -n1 port -D % lint --nitpick
     - name: Install
