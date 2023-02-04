@@ -39,7 +39,7 @@ jobs:
         EOF
     - name: Check PortIndex
       run: |
-        portindex
+        portindex -d -f
         git diff --exit-code HEAD -- PortIndex PortIndex.quick
     - name: Lint
       run: cut -d ' ' -f 1 PortIndex.quick | xargs port lint --nitpick
