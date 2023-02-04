@@ -32,8 +32,11 @@ jobs:
       run: sudo port -v selfupdate
     - name: Configure MacPorts
       run: |
-        sudo echo 'revupgrade_mode report' >> /opt/local/etc/macports/macports.conf
-        sudo echo 'file://${{ github.workspace }}' >> /opt/local/etc/macports/sources.conf
+        echo 'revupgrade_mode report' | sudo tee -a /opt/local/etc/macports/macports.conf
+        cat <<-EOF | sudo tee /opt/local/etc/macports/sources.conf
+        file://${{ github.workspace }}
+        rsync://rsync.macports.org/macports/release/tarballs/ports.tar [default]
+        EOF
     - name: Check PortIndex
       run: |
         portindex
