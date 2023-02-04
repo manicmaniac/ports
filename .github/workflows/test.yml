@@ -12,8 +12,11 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - uses: melusina-org/gha-install-macports@v1
+      id: install-macports
     - name: Update MacPorts
-      run: sudo port selfupdate
+      run: |
+        echo 'revupgrade_mode report' >> ${{ steps.install-macports.outputs.prefix }}/etc/macports/macports.conf
+        sudo port selfupdate
     - name: Install known dependencies
       run: sudo port install go pandoc
     - name: Check PortIndex
