@@ -10,19 +10,22 @@ jobs:
       run:
         shell: bash
     env:
-      MACPORTS_PKG_URL: https://github.com/macports/macports-base/releases/download/v2.8.1/MacPorts-2.8.1-12-Monterey.pkg
+      MACOS_VERSION: 12
+      MACPORTS_VERSION: v2.8.1
     steps:
     - uses: actions/checkout@v3
     - uses: actions/cache@v3
       id: cache-macports-pkg
       with:
         path: MacPorts.pkg
-        key: ${{ env.MACPORTS_PKG_URL }}-macports
+        key: macOS-${{ env.MACOS_VERSION }}-MacPorts-${{ env.MACPORTS_VERSION }}
     - name: Install MacPorts package
       if: steps.cache-macports-pkg.outputs.cache-hit != 'true'
       run: |
-        curl -Lo MacPorts.pkg ${{ env.MACPORTS_PKG_URL }}
-        sudo installer -pkg MacPorts.pkg -target /
+        gh release download --repo macports/macports-base --pattern 'MacPorts-*-${{ env.MACOS_VERSION }}-*.pkg' ${{ env.MACPORTS_VERSION }}
+        sudo installer -pkg MacPorts-*-${{ env.MACOS_VERSION }}-*.pkg -target /
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Add MacPorts path
       run: echo '/opt/local/bin' >> "$GITHUB_PATH"
     - name: Update MacPorts
