@@ -1,0 +1,6 @@
+ports:
+- name: go
+- name: pandoc
+sources:
+- rsync://rsync.macports.org/macports/release/tarballs/ports.tar
+- file:///Users/runner/work/ports/ports

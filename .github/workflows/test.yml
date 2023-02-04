@@ -6,33 +6,18 @@ jobs:
     defaults:
       run:
         shell: bash
-    env:
-      MACPORTS_PKG_URL: https://github.com/macports/macports-base/releases/download/v2.8.1/MacPorts-2.8.1-12-Monterey.pkg
     steps:
     - uses: actions/checkout@v3
-    - uses: actions/cache@v3
-      id: cache-macports-pkg
-      with:
-        path: MacPorts.pkg
-        key: ${{ env.MACPORTS_PKG_URL }}-macports
-    - name: Download MacPorts package
-      if: steps.cache-macports-pkg.outputs.cache-hit != 'true'
-      run: curl -Lo MacPorts.pkg ${{ env.MACPORTS_PKG_URL }}
-    - name: Install MacPorts
-      run: |
-        sudo installer -pkg MacPorts.pkg -target /
-        sudo /opt/local/bin/port -v selfupdate
-    - name: Add local ports to sources
-      run: sudo ruby -pi -e 'puts "file://#{Dir.pwd}" if /^rsync:/' /opt/local/etc/macports/sources.conf
+    - uses: melusina-org/gha-install-macports@v1
     - name: Check PortIndex
       run: |
-        /opt/local/bin/portindex
+        portindex
         git diff --exit-code HEAD -- PortIndex PortIndex.quick
     - name: Lint
-      run: cut -d ' ' -f 1 PortIndex.quick | xargs /opt/local/bin/port lint --nitpick
+      run: cut -d ' ' -f 1 PortIndex.quick | xargs port lint --nitpick
     - name: Install
       id: install
-      run: cut -d ' ' -f 1 PortIndex.quick | sudo xargs /opt/local/bin/port install 2>&1 | tee "$TMPDIR/install.log"
+      run: cut -d ' ' -f 1 PortIndex.quick | sudo xargs port install 2>&1 | tee "$TMPDIR/install.log"
     - name: Show failure log
       if: failure() && steps.install.outcome == 'failure'
       run: grep 'Error:' "$TMPDIR/install.log" | grep -o ' /[^ ]*[.]log ' | xargs cat
