@@ -41,6 +41,9 @@ if {${os.major} < 12} {
     }
 }
 
+build.pre_args-append -derivedDataPath ./DerivedData
+destroot.pre_args-append -derivedDataPath ./DerivedData
+
 post-destroot {
     set docdir ${prefix}/share/doc/${name}
     xinstall -d ${destroot}${docdir}
