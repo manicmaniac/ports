@@ -9,8 +9,8 @@
         "(^|/)Portfile$"
       ],
       "matchStrings": [
-        "^github\\.setup\\s+(?<owner>[0-9A-Za-z-]+)\\s+(?<repo>[\\w.-]+)\\s+(?<currentValue>[\\w.-]+)$",
-        "^go\\.setup\\s+github\\.com/(?<owner>[0-9A-Za-z-]+)/(?<repo>[\\w.-]+)\\s+(?<currentValue>[\\w.-]+)$"
+        "github\\.setup\\s+(?<owner>[0-9A-Za-z-]+)\\s+(?<repo>[\\w.-]+)\\s+(?<currentValue>[\\w.-]+)",
+        "go\\.setup\\s+github\\.com/(?<owner>[0-9A-Za-z-]+)/(?<repo>[\\w.-]+)\\s+(?<currentValue>[\\w.-]+)"
       ],
       "depNameTemplate": "{{{owner}}}/{{{repo}}}",
       "datasourceTemplate": "git-tags"
