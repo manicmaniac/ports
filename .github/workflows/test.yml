@@ -47,11 +47,13 @@ jobs:
         file://${{ github.workspace }} [nosync]
         rsync://rsync.macports.org/macports/release/tarballs/ports.tar [default]
         EOF
+    - name: List ports
+      run: find . -name 'Portfile' -execdir pwd \; | tee '${{ runner.temp }}/ports.txt'
     - name: Lint
-      run: git ls-files -- '*/Portfile' | xargs dirname | xargs -I% -n1 port -D % lint --nitpick
+      run: xargs port lint --nitpick < '${{ runner.temp }}/ports.txt'
     - name: Install
       id: install
-      run: git ls-files -- '*/Portfile' | xargs dirname | sudo xargs -I% -n1 port -D % install 2>&1 | tee "$TMPDIR/install.log"
+      run: sudo xargs port install < '${{ runner.temp }}/ports.txt' | tee "$TMPDIR/install.log"
     - name: Show failure log
       if: failure() && steps.install.outcome == 'failure'
       run: grep 'Error:' "$TMPDIR/install.log" | grep -o ' /[^ ]*[.]log ' | xargs cat
