@@ -13,7 +13,13 @@
         "go\\.setup\\s+github\\.com/(?<owner>[0-9A-Za-z-]+)/(?<repo>[\\w.-]+)\\s+(?<currentValue>[\\w.-]+)"
       ],
       "depNameTemplate": "{{{owner}}}/{{{repo}}}",
-      "datasourceTemplate": "git-tags"
+      "datasourceTemplate": "github-tags"
+    }
+  ],
+  "packageRules": [
+    {
+      "matchPackageNames": ["manicmaniac/class-dump"],
+      "versioning": "regex:^(?<compatibility>3\\.5)-(?<major>\\d+)\\.(?<minor>\\d+)(\\.(?<patch>\\d+))?$"
     }
   ]
 }
