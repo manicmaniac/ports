@@ -4,7 +4,28 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 jobs:
+  bump-checksums:
+    runs-on: macOS-12
+    defaults:
+      run:
+        shell: bash
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+    - uses: melusina-org/gha-install-macports@v1
+      id: install-macports
+    - name: Bump checksum
+      run: |
+        git ls-files -- '*/Portfile' | xargs dirname | xargs port bump
+        if ! git diff --exit-code HEAD -- '*/Portfile'; then
+          git config --local user.name 'github-actions[bot]'
+          git config --local user.email '<github-actions[bot]@users.noreply.github.com>'
+          git commit --message 'Bump checksum' -- '*/Portfile'
+          git push
+        fi
   test:
+    needs: bump-checksums
     runs-on: macOS-12
     defaults:
       run:
