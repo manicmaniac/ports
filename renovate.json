@@ -2,5 +2,18 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:base"
+  ],
+  "regexManagers": [
+    {
+      "fileMatch": [
+        "(^|/)Portfile$"
+      ],
+      "matchStrings": [
+        "^github\\.setup\\s+(?<owner>[0-9A-Za-z-]+)\\s+(?<repo>[\\w.-]+)\\s+(?<currentValue>[\\w.-]+)$",
+        "^go\\.setup\\s+github\\.com/(?<owner>[0-9A-Za-z-]+)/(?<repo>[\\w.-]+)\\s+(?<currentValue>[\\w.-]+)$"
+      ],
+      "depNameTemplate": "{{{owner}}}/{{{repo}}}",
+      "dataSourceTemplate": "git-tags"
+    }
   ]
 }
