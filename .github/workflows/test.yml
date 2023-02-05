@@ -9,32 +9,15 @@ jobs:
     defaults:
       run:
         shell: bash
-    env:
-      MACOS_VERSION: 12
-      MACPORTS_VERSION: v2.8.1
     steps:
     - uses: actions/checkout@v3
-    - uses: actions/cache@v3
-      id: cache-macports-pkg
-      with:
-        path: MacPorts.pkg
-        key: macOS-${{ env.MACOS_VERSION }}-MacPorts-${{ env.MACPORTS_VERSION }}
-    - name: Install MacPorts package
-      if: steps.cache-macports-pkg.outputs.cache-hit != 'true'
-      run: |
-        gh release download --repo macports/macports-base --pattern 'MacPorts-*-${{ env.MACOS_VERSION }}-*.pkg' ${{ env.MACPORTS_VERSION }}
-        sudo installer -pkg MacPorts-*-${{ env.MACOS_VERSION }}-*.pkg -target /
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - name: Add MacPorts path
-      run: echo '/opt/local/bin' >> "$GITHUB_PATH"
-    - name: Update MacPorts
-      run: sudo port -v selfupdate
+    - uses: melusina-org/gha-install-macports@v1
+      id: install-macports
     - name: Configure MacPorts
       run: |
         echo 'revupgrade_mode report' | sudo tee -a /opt/local/etc/macports/macports.conf
         cat <<-EOF | sudo tee /opt/local/etc/macports/sources.conf
-        file://${{ github.workspace }}
+        file://${{ github.workspace }} [nosync]
         rsync://rsync.macports.org/macports/release/tarballs/ports.tar [default]
         EOF
     - name: Lint
