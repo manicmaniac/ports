@@ -13,7 +13,7 @@
         "go\\.setup\\s+github\\.com/(?<owner>[0-9A-Za-z-]+)/(?<repo>[\\w.-]+)\\s+(?<currentValue>[\\w.-]+)"
       ],
       "depNameTemplate": "{{{owner}}}/{{{repo}}}",
-      "datasourceTemplate": "git-tags"
+      "datasourceTemplate": "github-tags"
     }
   ]
 }
