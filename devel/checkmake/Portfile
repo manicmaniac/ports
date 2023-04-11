@@ -3,7 +3,7 @@
 PortSystem          1.0
 PortGroup           golang 1.0
 
-go.setup            github.com/mrtazz/checkmake 0.2.1
+go.setup            github.com/mrtazz/checkmake 0.2.2
 categories          devel
 maintainers         @manicmaniac gmail.com:rito.0305
 license             MIT
