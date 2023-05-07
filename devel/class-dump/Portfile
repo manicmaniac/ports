@@ -4,7 +4,7 @@ PortSystem          1.0
 PortGroup           github 1.0
 PortGroup           xcode 1.0
 
-github.setup        manicmaniac class-dump 3.5-0.2.0
+github.setup        manicmaniac class-dump 3.5-0.2.1
 github.tarball_from archive
 
 name                class-dump
@@ -20,9 +20,9 @@ long_description    It generates declarations for the classes, \
                     information provided by using 'otool -ov', \
                     but presented as normal Objective-C declarations.
 
-checksums           rmd160  9f95af902ca72be8d683c3de9cc9d0644714991e \
-                    sha256  eb49b66d73605db3d5c962646acd2af22cf5283bbda03a08a71f0bbc63ecbb34 \
-                    size    146623
+checksums           rmd160  c5a8668e3dbee6b0a981b2d9439319a70876d57f \
+                    sha256  4a9d1fee53fbd5b5da02e8f949862d9623be73c0d7c4f652951674c5fd2cd741 \
+                    size    146979
 
 # error: -fobjc-arc is not supported on platforms using the legacy runtime
 supported_archs     x86_64
