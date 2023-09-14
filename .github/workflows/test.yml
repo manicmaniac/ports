@@ -22,7 +22,7 @@ jobs:
       id: check-last-commit
       continue-on-error: true
       run: test "$(git log -1 --pretty=format:%s)" = 'Bump checksum'
-    - uses: melusina-org/gha-install-macports@v1
+    - uses: melusina-org/setup-macports@v1
       if: steps.check-last-commit.outcome == 'failure'
       id: install-macports
     - name: Bump checksum
@@ -43,7 +43,7 @@ jobs:
         shell: bash
     steps:
     - uses: actions/checkout@v4
-    - uses: melusina-org/gha-install-macports@v1
+    - uses: melusina-org/setup-macports@v1
       id: install-macports
     - name: Configure MacPorts
       run: |
