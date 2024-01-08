@@ -4,7 +4,7 @@ PortSystem              1.0
 PortGroup               github 1.0
 PortGroup               xcode 1.0
 
-github.setup            manicmaniac xcnew 0.6.5
+github.setup            manicmaniac xcnew 0.6.6
 github.tarball_from     archive
 
 name                    xcnew
