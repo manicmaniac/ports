@@ -48,7 +48,7 @@ jobs:
     - name: Configure MacPorts
       run: |
         echo 'revupgrade_mode report' | sudo tee -a /opt/local/etc/macports/macports.conf
-        cat <<-EOF | sudo tee /opt/local/etc/macports/sources.conf
+        sudo tee /opt/local/etc/macports/sources.conf <<EOF
         file://$GITHUB_WORKSPACE [nosync]
         rsync://rsync.macports.org/macports/release/tarballs/ports.tar [default]
         EOF
