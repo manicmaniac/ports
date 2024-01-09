@@ -48,17 +48,17 @@ jobs:
     - name: Configure MacPorts
       run: |
         echo 'revupgrade_mode report' | sudo tee -a /opt/local/etc/macports/macports.conf
-        cat <<-EOF | sudo tee /opt/local/etc/macports/sources.conf
-        file://${{ github.workspace }} [nosync]
+        sudo tee /opt/local/etc/macports/sources.conf <<EOF
+        file://$GITHUB_WORKSPACE [nosync]
         rsync://rsync.macports.org/macports/release/tarballs/ports.tar [default]
         EOF
     - name: List ports
-      run: find . -name 'Portfile' -execdir pwd \; | tee '${{ runner.temp }}/ports.txt'
+      run: find . -name 'Portfile' -execdir pwd \; | tee "$TMPDIR/ports.txt"
     - name: Lint
-      run: xargs port lint --nitpick < '${{ runner.temp }}/ports.txt'
+      run: xargs port lint --nitpick < "$TMPDIR/ports.txt"
     - name: Install
       id: install
-      run: sudo xargs port install < '${{ runner.temp }}/ports.txt' | tee "$TMPDIR/install.log"
+      run: sudo xargs port install < "$TMPDIR/ports.txt" | tee "$TMPDIR/install.log"
     - name: Show failure log
       if: failure() && steps.install.outcome == 'failure'
       run: grep 'Error:' "$TMPDIR/install.log" | grep -o ' /[^ ]*[.]log ' | xargs cat
