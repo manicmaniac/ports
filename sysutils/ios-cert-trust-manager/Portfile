@@ -17,9 +17,9 @@ description              Simple management script to import/list/remove CA \
                          certificates to iOS simulator.
 long_description         {*}${description}
 
-checksums                rmd160  afbb819d2472091879876bafb1fa76f837c8cdd4 \
-                         sha256  ce8ea607f4dc26cd2c472b6c3943eaf40876ccb9c238d827a3a0f962418a041b \
-                         size    120570
+checksums                rmd160  a9a899ce70fa24a4874a22713d88ef05f2c51cae \
+                         sha256  d3f8bf614879c092ea9dec40a334999ae653cde2e1847618962a148f7c0d6c70 \
+                         size    120578
 
 supported_archs          noarch
 
