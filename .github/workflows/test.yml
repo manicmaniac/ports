@@ -5,7 +5,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   bump-checksums:
-    runs-on: macOS-12
+    runs-on: macOS-13
     defaults:
       run:
         shell: bash
@@ -37,10 +37,21 @@ jobs:
         fi
   test:
     needs: bump-checksums
-    runs-on: macOS-12
+    strategy:
+      matrix:
+        include:
+          - os: macOS-13
+            xcode: 14.3.1
+            developer_dir: /Applications/Xcode_14.3.1.app
+          - os: macOS-14
+            xcode: 15.4
+            developer_dir: /Applications/Xcode_15.4.app
+    runs-on: ${{ matrix.os }}
     defaults:
       run:
         shell: bash
+    env:
+      DEVELOPER_DIR: ${{ matrix.developer_dir }}/Contents/Developer
     steps:
     - uses: actions/checkout@v4
     - uses: melusina-org/setup-macports@v1
